@@ -15,33 +15,33 @@ CREATE TABLE IF NOT EXISTS products(
         
         conn.commit()
 init_db()
+class Book:
+    def add_product(self):
+        with sqlite3.connect('products.db') as conn:
+            cursor = conn.cursor()
+            data = request.get_json()
+            for item in data:
+                cursor.execute("INSERT INTO products (title, img_path, price, amount) VALUES (?, ?, ?, ?)",
+                                (item['title'], item['img_path'], item['price'], item['amount']))
 
-def add_product():
-    with sqlite3.connect('products.db') as conn:
-        cursor = conn.cursor()
-        data = request.get_json()
-        for item in data:
-            cursor.execute("INSERT INTO products (title, img_path, price, amount) VALUES (?, ?, ?, ?)",
-                            (item['title'], item['img_path'], item['price'], item['amount']))
+            conn.commit()
 
-        conn.commit()
+    def delete_product(self, id):
+        with sqlite3.connect('products.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT amount FROM products')
+            for product in cursor.fetchall():
+                if product == 0:
+                    cursor.execute('DELETE FROM products WHERE id=? ', (id, ))
 
-def delete_product(id):
-    with sqlite3.connect('products.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT amount FROM products')
-        for product in cursor.fetchall():
-            if product == 0:
-                cursor.execute('DELETE FROM products WHERE id=? ', (id, ))
+            conn.commit()
 
-        conn.commit()
+    def get_all_products(self ):
+        with sqlite3.connect('products.db') as conn:
+            cursor = conn.cursor()
 
-def get_all_products():
-    with sqlite3.connect('products.db') as conn:
-        cursor = conn.cursor()
+            cursor.execute('SELECT * FROM products')
+            dict_products = cursor.fetchall()
 
-        cursor.execute('SELECT * FROM products')
-        dict_products = cursor.fetchall()
-
-        return dict_products
-    
+            return dict_products
+        
