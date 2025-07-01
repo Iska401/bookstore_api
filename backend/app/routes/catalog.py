@@ -1,8 +1,8 @@
-from flask import Flask, jsonify
+from flask import jsonify
 from flask_restful import Resource
 from models import Book
+from app import app
 
-app = Flask(__name__)
 
 class ProductList(Resource):
     def get(self):
@@ -11,3 +11,5 @@ class ProductList(Resource):
     def post(self):
         Book().add_product()
         return {"message": "Product(s) added successfully"}, 201
+
+    

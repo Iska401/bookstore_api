@@ -1,19 +1,14 @@
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify
+from app import app
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+db = SQLAlchemy(app)
 
 def init_db():
-    with sqlite3.connect('products.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-CREATE TABLE IF NOT EXISTS products(
-        id INTEGER PRIMARY KEY,
-        title TEXT NOT NULL,
-        img_path TEXT NOT NULL,
-        price INTEGER,
-        amount INTEGER)
-""")
-        
-        conn.commit()
+    
+    
 init_db()
 class Book:
     def add_product(self):
