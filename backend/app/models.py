@@ -1,42 +1,49 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, request, jsonify
-from app import app
+from flask import request
+from run import app
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
-def init_db():
-    
-    
-init_db()
-class Book:
-    def add_product(self):
-        with sqlite3.connect('products.db') as conn:
-            cursor = conn.cursor()
-            data = request.get_json()
-            for item in data:
-                cursor.execute("INSERT INTO products (title, img_path, price, amount) VALUES (?, ?, ?, ?)",
-                                (item['title'], item['img_path'], item['price'], item['amount']))
+class Book(db.Model):
+    # Создаю столбцы
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    img_path = db.Column(db.Text, nullable=False)
+    # seller = db.Column()
 
-            conn.commit()
-
-    def delete_product(self, id):
-        with sqlite3.connect('products.db') as conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT amount FROM products')
-            for product in cursor.fetchall():
-                if product == 0:
-                    cursor.execute('DELETE FROM products WHERE id=? ', (id, ))
-
-            conn.commit()
-
-    def get_all_products(self ):
-        with sqlite3.connect('products.db') as conn:
-            cursor = conn.cursor()
-
-            cursor.execute('SELECT * FROM products')
-            dict_products = cursor.fetchall()
-
-            return dict_products
+    @classmethod
+    def add_book(cls):
+        """
+        Это функция, которая получает книгу (JSON формат) c REST-API
+        сервера, и затем добавляет его в базу данных.
         
+        """
+        data = request.get_json()
+        book = cls(
+            title=data['title'],
+            price=data['price'],
+            description=data['description']
+        )
+
+        db.session.add(book)
+        db.session.commit()
+
+    # def delete_book():
+    #     book_to_delte = db.query.get()
+
+    @classmethod
+    def get_all_books(cls):
+        """
+        Вывод всех книг
+
+        """
+        books = cls.query.all()
+        return [{'id': book.id(), 'title': book.title(), 'price': book.price(), 'description': book.description()} for book in books]
+    
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
