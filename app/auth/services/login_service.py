@@ -1,6 +1,6 @@
 import bcrypt
 from marshmallow import ValidationError
-from app import UserModel
+from app.models import UserModel
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask import request
 from ..schemas import LoginSchema
