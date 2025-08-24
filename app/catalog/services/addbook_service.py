@@ -1,10 +1,10 @@
 from flask import request
 from marshmallow import ValidationError
 from app.catalog import BookSchema
-from app.models import BookDb
+from app.models import BookModel
 
 
-db = BookDb()
+db = BookModel()
 
 class AddBookService:
     def add_book(self):

@@ -1,5 +1,5 @@
 from flask import request
-from app.models import BookDb
+from app.models import BookModel
 
 
 class DeleteBookService:
